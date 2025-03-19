@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class ThiefController : MonoBehaviour
+public class ThiefMover : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _stoppingDistance = 0.1f;
