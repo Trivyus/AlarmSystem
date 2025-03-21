@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ThiefMover : MonoBehaviour
@@ -6,6 +7,7 @@ public class ThiefMover : MonoBehaviour
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _stoppingDistance = 0.1f;
     [SerializeField] private Camera _camera;
+    [SerializeField] private int _rightMouseButton = 1;
 
     private Vector3 _targetPosition;
     private bool _isMoving = false;
@@ -15,9 +17,10 @@ public class ThiefMover : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody>();
     }
+
     private void Update()
     {
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(_rightMouseButton))
         {
             Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
 

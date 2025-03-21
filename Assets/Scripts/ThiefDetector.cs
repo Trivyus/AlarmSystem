@@ -3,17 +3,33 @@ using UnityEngine;
 
 public class ThiefDetector : MonoBehaviour
 {
-    [SerializeField] private Alarm _alarm;
+    private int _numberOfThiefs = 0;
+    public event Action ThiefEntered;
+    public event Action ThiefEscaped;
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<ThiefMover>(out _))
-            _alarm.ThiefEntered();
+        {
+            _numberOfThiefs++;
+
+            if (_numberOfThiefs == 1)
+            {
+                ThiefEntered?.Invoke();
+            }
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.TryGetComponent<ThiefMover>(out _))
-            _alarm.ThiefExited();
+        {
+            _numberOfThiefs--;
+
+            if (_numberOfThiefs <= 0)
+            {
+                ThiefEscaped?.Invoke();
+            }
+        }
     }
 }

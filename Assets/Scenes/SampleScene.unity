@@ -252,6 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _alarmAudioSource: {fileID: 226565385}
+  _thiefDetector: {fileID: 226565390}
   _fadeSpeed: 0.3
   _maxVolume: 1
   _minVolume: 0
@@ -324,7 +325,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce13f7aae23afcd40a63aa48729ae051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _alarm: {fileID: 226565386}
 --- !u!850595691 &367272817
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -909,6 +909,7 @@ MonoBehaviour:
   _speed: 50
   _stoppingDistance: 0.1
   _camera: {fileID: 963194227}
+  _rightMouseButton: 1
 --- !u!136 &1104789862
 CapsuleCollider:
   m_ObjectHideFlags: 0

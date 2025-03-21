@@ -4,53 +4,64 @@ using UnityEngine;
 public class Alarm : MonoBehaviour
 {
     [SerializeField] private AudioSource _alarmAudioSource;
+    [SerializeField] private ThiefDetector _thiefDetector;
     [SerializeField] private float _fadeSpeed = 0.3f;
     [SerializeField] private float _maxVolume = 1f;
     [SerializeField] private float _minVolume = 0f;
 
-    private bool _isThiefInside = false;
     private Coroutine _alarmCoroutine;
 
-    public void ThiefEntered()
+    private void OnEnable()
     {
-        _isThiefInside = true;
-
-        if (_alarmCoroutine == null)
-            _alarmCoroutine = StartCoroutine(UpdateAlarmVolume());
+        _thiefDetector.ThiefEntered += Activate;
+        _thiefDetector.ThiefEscaped += Deactivate;
     }
 
-    public void ThiefExited()
+    private void OnDisable()
     {
-        _isThiefInside = false;
-
-        if (_alarmCoroutine == null)
-            _alarmCoroutine = StartCoroutine(UpdateAlarmVolume());
+        _thiefDetector.ThiefEntered -= Activate;
+        _thiefDetector.ThiefEscaped -= Deactivate;
     }
 
-    private IEnumerator UpdateAlarmVolume()
+    private void Activate()
     {
-        while (enabled)
+        if (_alarmCoroutine != null)
         {
-            float targetVolume = _isThiefInside ? _maxVolume : _minVolume;
+            StopCoroutine(_alarmCoroutine);
+        }
+        _alarmCoroutine = StartCoroutine(IncreaseVolume());
+    }
 
-            _alarmAudioSource.volume = Mathf.MoveTowards(_alarmAudioSource.volume, targetVolume, _fadeSpeed * Time.deltaTime);
+    private void Deactivate()
+    {
+        if (_alarmCoroutine != null)
+        {
+            StopCoroutine(_alarmCoroutine);
+        }
+        _alarmCoroutine = StartCoroutine(TurnDownVolume());
+    }
 
-            if (_alarmAudioSource.volume > 0 && !_alarmAudioSource.isPlaying)
-            {
-                _alarmAudioSource.Play();
-            }
-            else if (_alarmAudioSource.volume <= 0 && _alarmAudioSource.isPlaying)
-            {
-                _alarmAudioSource.Stop();
-            }
+    private IEnumerator IncreaseVolume()
+    {
+        if (!_alarmAudioSource.isPlaying)
+            _alarmAudioSource.Play();
 
-            if (Mathf.Approximately(_alarmAudioSource.volume, targetVolume))
-            {
-                _alarmCoroutine = null;
-                yield break;
-            }
-
+        while (Mathf.Approximately(_alarmAudioSource.volume, _maxVolume) == false)
+        {
+            _alarmAudioSource.volume = Mathf.MoveTowards(_alarmAudioSource.volume, _maxVolume, _fadeSpeed * Time.deltaTime);
             yield return null;
         }
+    }
+
+    private IEnumerator TurnDownVolume()
+    {
+        while (Mathf.Approximately(_alarmAudioSource.volume, _minVolume) == false)
+        {
+            _alarmAudioSource.volume = Mathf.MoveTowards(_alarmAudioSource.volume, _minVolume, _fadeSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        if (_alarmAudioSource.volume <= 0 && _alarmAudioSource.isPlaying)
+            _alarmAudioSource.Stop();
     }
 }
